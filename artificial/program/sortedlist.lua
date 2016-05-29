@@ -4,8 +4,8 @@ sorted_list.new=function()
   _.constructor=sorted_list
   local _items={}
   _.add=function(i,o)
-    l=#_items
-    p=1
+    local l=#_items
+    local p=1
     while(p<=l)do
       if _items[p].o<o then p+=1 else break end
     end

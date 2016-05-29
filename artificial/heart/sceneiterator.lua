@@ -8,7 +8,7 @@ scene_iterator.new=function(order)
   _.register_method=function(m, order) _methods.add(m,order) end
 
   local _iterate=function()
-    s=_.parent.as(scene)
+    local s=_.parent.as(scene)
     for i in all(s.items) do
       for m in all(_methods) do m(i) end
     end

@@ -8,14 +8,15 @@ classical_mechanics.new=function(order)
     local m=i.as(movable)
     local f=i.as(force_user)
     if f then
-      if f.mass() then
-        f.acceleration(f.force()/f.mass())
-        f.force().set(0,0)
-        f.velocity().add(v2.multiply(f.acceleration(),dt))
+      ms=f.mass()
+      if ms then
+        f.acceleration(vector.multiply(f.accumulated_force(),1/ms))
+        f.accumulated_force().set(0,0)
+        f.velocity().add(vector.multiply(f.acceleration(),dt))
       end
     end
     if m then
-      m.position().add(v2.multiply(m.velocity(),dt))
+      m.position().add(vector.multiply(m.velocity(),dt))
     end
   end
 
