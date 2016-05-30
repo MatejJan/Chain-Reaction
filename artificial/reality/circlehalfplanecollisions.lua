@@ -4,13 +4,9 @@ circle_half_plane_collisions.new=function(order)
   local __=extend(_)
   _.constructor=circle_half_plane_collisions
 
-  local _resolve_collision=function(i1, i2)
-    local cc1=i1.as(circle_collider)
-    local cc2=i2.as(circle_collider)
-    local hpc1=i1.as(half_plane_collider)
-    local hpc2=i2.as(half_plane_collider)
-    local cc=cc1 or cc2
-    local hpc=hpc1 or hpc2
+  local _detect_collision=function(i1, i2)
+    local cc=i1.as(circle_collider)
+    local hpc=i2.as(half_plane_collider)
     if not (cc and hpc) then return end
 
     local n=hpc.half_plane.normal
@@ -18,15 +14,20 @@ circle_half_plane_collisions.new=function(order)
     local rd=a-hpc.half_plane.distance
     if rd>0 then return end
 
-    local vrd=vector.multiply(n,rd*2)
+    --if cc==cc2 then
+    --  n.negate()
+    --end
 
-    collision.relax(cc.parent,hpc.parent,vrd)
-    collision.collide(cc.parent,hpc.parent,n)
+    return{
+      normal=n,
+      relax_distance=rd,
+      relax_vector=vector.multiply(n,rd)
+    }
   end
 
   _.install=function(parent)
     __.install(parent)
-    parent.as(collision_detector).register_method(_resolve_collision,order)
+    parent.as(collision_detector).register_method(_detect_collision,order)
   end
 
   return _

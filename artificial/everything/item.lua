@@ -7,7 +7,10 @@ item.new=function()
     _.parts[p.constructor] = p
     if p.install then p.install(_) end
   end
-  _.remove=function(p) _.parts[p.constructor]=nil end
+  _.remove=function(p)
+    if p.uninstall then p.uninstall() end
+    _.parts[p.constructor]=nil
+  end
   _.as=function(t) if t==_.constructor then return _ end return _.parts[t] end
   _.has=function(t) return _.parts[t]~=nil end
   _.require=function(t)

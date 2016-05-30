@@ -1,4 +1,21 @@
 collision={}
+collision.resolve=function(i1,i2, collision_info)
+  local cc1=i1.as(custom_collider)
+  local cc2=i2.as(custom_collider)
+
+  if cc1 and cc1.collision_info then cc1.collision_info(i2, collision_info) end
+  if cc2 and cc2.collision_info then cc2.collision_info(i1, collision_info) end
+
+  local resolve=true
+  if cc1 and cc1.colliding_with_item then resolve=resolve and cc1.colliding_with_item(i2) end
+  if cc2 and cc2.colliding_with_item then resolve=resolve and cc2.colliding_with_item(i1) end
+  if resolve then
+    collision.relax(i1,i2,collision_info.relax_vector)
+    collision.exchange_energy(i1,i2,collision_info.normal)
+    if cc1 and cc1.collided_with_item then cc1.collided_with_item(i2) end
+    if cc2 and cc2.collided_with_item then cc2.collided_with_item(i1) end
+  end
+end
 collision.relax=function(i1,i2,vrd)
   local p1=0.5
   local p2=0.5
@@ -30,7 +47,7 @@ collision.relax=function(i1,i2,vrd)
   if ip1 then ip1.value.subtract(vector.multiply(vrd,p1)) end
   if ip2 then ip2.value.add(vector.multiply(vrd,p2)) end
 end
-collision.collide=function(i1,i2,n)
+collision.exchange_energy=function(i1,i2,n)
   local vl1=vector.zero()
   local vl2=vector.zero()
   local iv1=i1.as(velocity)
@@ -51,7 +68,7 @@ collision.collide=function(i1,i2,n)
   local m2=im2 and im2.value or nil
   local m1i=m1 and 1/m1 or 0
   local m2i=m2 and 1/m2 or 0
-  local f=-(1+cor)*s12/(m1i+m2i)
-  if iv1 then iv1.value.add(vector.multiply(n,f*m1i)) end
-  if iv2 then iv2.value.subtract(vector.multiply(n,f*m2i)) end
+  local f=mul((1+cor),mul(s12,1/plus(m1i,m2i)))
+  if iv1 then iv1.value.subtract(vector.multiply(n,mul(f,m1i))) end
+  if iv2 then iv2.value.add(vector.multiply(n,mul(f,m2i))) end
 end

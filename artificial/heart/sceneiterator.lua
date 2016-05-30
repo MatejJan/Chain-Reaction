@@ -9,8 +9,10 @@ scene_iterator.new=function(order)
 
   local _iterate=function()
     local s=_.parent.as(scene)
-    for i in all(s.items) do
-      for m in all(_methods) do m(i) end
+    for m in all(_methods) do
+      for i in all(s.items) do
+        m(i)
+      end
     end
   end
 

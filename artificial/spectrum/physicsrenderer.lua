@@ -3,14 +3,16 @@ physics_renderer.new=function(s)
   local _={
     position=true,
     velocity=false,
+    acceleration=false,
     geometry=true
   }
   local __=extend(_)
   _.constructor=physics_renderer
-  _.draw=function()
+  _.render=function()
     for i in all(s.items) do
       local p = i.as(position)
       local v = i.as(velocity)
+      local a = i.as(acceleration)
       local cc = i.as(circle_collider)
       local hpc = i.as(half_plane_collider)
       if p then
@@ -19,8 +21,12 @@ physics_renderer.new=function(s)
           line(p.value.x-1,p.value.y,p.value.x+1,p.value.y,10)
         end
         if v and _.velocity then
-          local d=vector.multiply(v.value, 2)
+          local d=vector.multiply(v.value, 0.2)
           line(p.value.x,p.value.y,p.value.x+d.x,p.value.y+d.y,11)
+        end
+        if a and _.acceleration then
+          local d=vector.multiply(a.value, 0.2)
+          line(p.value.x,p.value.y,p.value.x+d.x,p.value.y+d.y,14)
         end
       end
       if cc and _.geometry then
